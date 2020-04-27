@@ -4,7 +4,6 @@
 let dmasValue = undefined;
 function calculate(input) {
     dmasValue = scanBidmas(input);
-    console.log('calculate input ' + input);
     while(input.length > 1){
         for (let i =0;i < input.length; i++){
             let answer = 0;
@@ -94,7 +93,6 @@ function scanBidmas(input) {
 
 
 function getInsideBrackets(input) {
-    console.log('brackets' + input);
     if (input.includes('(')){
         let returnArray = [];
         let bracketPos = 0;
@@ -128,30 +126,19 @@ function getInsideBrackets(input) {
 
 
 function fullCalculation(input) {
-    console.log('full calculation');
+
     while (input.length > 1){
+        console.log(input);
         if (input.includes('(')){
             for (let i =0; i < input.length; i++){
-                console.log(input);
                 if (input[i] === '('){
-                    let insideBrackets = getInsideBrackets(input);
+                    let insidebracketArray = input;
+                    let insideBrackets = getInsideBrackets(insidebracketArray);
                     
                     if (insideBrackets.includes('(')){
                         const innerInsideBracketLength = insideBrackets.length;
                         insideBracketsAnswer = fullCalculation(insideBrackets)
-                        console.log('Inside bracket length ' + innerInsideBracketLength);
-                        if (input[innerInsideBracketLength + 1] === ')'){
-                            input.splice(i, innerInsideBracketLength);
-                        }
-                        else{
-                            
-                            if (input[innerInsideBracketLength + 1] === '+' || '-' || '*' || '/'){
-                                input.splice(i, innerInsideBracketLength - 2)
-                            }
-                            else{
-                                input.splice(i, innerInsideBracketLength - 1)
-                            }
-                        }
+                        input.splice(i, innerInsideBracketLength);
                         
                     }
                     const insideBracketLength = insideBrackets.length;
@@ -163,7 +150,6 @@ function fullCalculation(input) {
             }
         }
         else{
-            console.log('final Input' + input);
             input = calculate(input);
             return input[0];
         }
@@ -172,6 +158,7 @@ function fullCalculation(input) {
 }
 
 let calculation = [18,'*',19,'+',22,'*',33,'/',12];
-let bracketInput = [4,'+','(',2, '+','(',4,'+','(',4,'+',1,')',')',')','+',4, '-', '(',3,'+',2,')'];
+// 4+(2+(4+(4+1)))+4-(3+2)
+let bracketInput = [4, '+', 5, '+', '(', 9, '+', '(',5,'+',4,')', ')', '+', '(', 2, '+', 2, ')'];
 //console.log(getInsideBrackets(bracketInput));
 console.log(fullCalculation(bracketInput));
