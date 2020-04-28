@@ -125,40 +125,89 @@ function getInsideBrackets(input) {
 }
 
 
-function fullCalculation(input) {
+/* function fullCalculation(input) {
 
     while (input.length > 1){
         console.log(input);
         if (input.includes('(')){
             for (let i =0; i < input.length; i++){
                 if (input[i] === '('){
-                    let insidebracketArray = input;
-                    let insideBrackets = getInsideBrackets(insidebracketArray);
-                    
-                    if (insideBrackets.includes('(')){
-                        const innerInsideBracketLength = insideBrackets.length;
-                        insideBracketsAnswer = fullCalculation(insideBrackets)
-                        input.splice(i, innerInsideBracketLength);
-                        
+                    let innerBracket = getInsideBrackets(input)
+                    let innerAnswer = fullCalculation(innerBracket)
+                    input[i] = innerAnswer;
+                    console.log(innerAnswer);
+                    while (true){
+                        if (input[i + 1] === ')'){
+                            input.splice(i + 1, 1)
+                            if (!input.includes(')')){
+                                break;
+                            }
+                            
+                        }
+                        else {
+                            input.splice(i + 1, 1)
+                        }
                     }
-                    const insideBracketLength = insideBrackets.length;
-                    insideCalculation = calculate(insideBrackets);
-                    input.splice(i, insideBracketLength + 1);
-                    input[i] = insideCalculation[0];
-                    
+                    }
                 }
             }
-        }
         else{
             input = calculate(input);
             return input[0];
         }
         
     }
+} */
+
+function fullCalculation(input) {
+    while (input.length > 1){
+        console.log('full input '+ input);
+        if (input.includes('(')){
+            for (let i =0; i < input.length; i++){
+                if (input[i] == '('){
+                    let newArray = [];
+                    let bracketPos = 0;
+                    for (let e = i; e < input.length; e++){
+                        //console.log('Bracket Position ' + bracketPos);
+                        if (input[e] === ')'){
+                            newArray.push(input[e]);
+                            //console.log(newArray);
+                            bracketPos -= 1;
+                            if (bracketPos == 0){
+                                break;
+                            }
+                        }
+                        else if (input[e] === '(') {
+                            newArray.push(input[e]);
+                            bracketPos += 1;
+                        }
+                        else {
+                            newArray.push(input[e]);
+                        }
+                    }
+                    const newArrayLength = newArray.length;
+                    newArray = getInsideBrackets(newArray)
+                    answer = fullCalculation(newArray);
+                    input[i] = answer;
+                    console.log('before splice ' + input);
+                    console.log(newArrayLength);
+                    input.splice(i + 1, newArrayLength - 1)
+                    console.log('after splice ' + input);
+                }
+            }
+        }
+        else{
+            console.log('Final Input ' + input);
+            input = calculate(input)
+            return input[0]
+        }
+    }
+    return input[0]
 }
 
 let calculation = [18,'*',19,'+',22,'*',33,'/',12];
 // 4+(2+(4+(4+1)))+4-(3+2)
-let bracketInput = [4, '+', 5, '+', '(', 9, '+', '(',5,'+',4,')', ')', '+', '(', 2, '+', 2, ')'];
+let bracketInput = ['(',4,'+','(',4,'+','(',4,'+',2,')',')',')','+','(',2, '+', 2.2,')'];
+let bracketInput2 = ['(',4,'+',3,')','+',2];
 //console.log(getInsideBrackets(bracketInput));
 console.log(fullCalculation(bracketInput));
