@@ -1,6 +1,7 @@
+const zeroDivisionError = 'Cannot Divide By Zero';
+const infiniteLoopError = 'Error'
 
-
-
+//calculate Individual Results
 let dmasValue = undefined;
 function calculate(input) {
     dmasValue = scanBidmas(input);
@@ -10,7 +11,10 @@ function calculate(input) {
             switch (input[i]) {
                 //Division
                 case '/':
-                    if (dmasValue == 0){
+                    if (input[i - 1] === 0 || input[i + 1] === 0){
+                        return zeroDivisionError
+                    }
+                    else if (dmasValue == 0){
                         answer = input[i - 1] / input[i + 1]
                         input.splice(i - 1, 2)
                         input[i - 1] = answer
@@ -125,42 +129,15 @@ function getInsideBrackets(input) {
 }
 
 
-/* function fullCalculation(input) {
-
-    while (input.length > 1){
-        console.log(input);
-        if (input.includes('(')){
-            for (let i =0; i < input.length; i++){
-                if (input[i] === '('){
-                    let innerBracket = getInsideBrackets(input)
-                    let innerAnswer = fullCalculation(innerBracket)
-                    input[i] = innerAnswer;
-                    console.log(innerAnswer);
-                    while (true){
-                        if (input[i + 1] === ')'){
-                            input.splice(i + 1, 1)
-                            if (!input.includes(')')){
-                                break;
-                            }
-                            
-                        }
-                        else {
-                            input.splice(i + 1, 1)
-                        }
-                    }
-                    }
-                }
-            }
-        else{
-            input = calculate(input);
-            return input[0];
-        }
-        
-    }
-} */
-
 function fullCalculation(input) {
     while (input.length > 1){
+        if (input.includes(zeroDivisionError)){
+            input = zeroDivisionError
+        }
+
+        else if (input === zeroDivisionError){
+            return zeroDivisionError
+        }
         console.log('full input '+ input);
         if (input.includes('(')){
             for (let i =0; i < input.length; i++){
@@ -199,6 +176,9 @@ function fullCalculation(input) {
         else{
             console.log('Final Input ' + input);
             input = calculate(input)
+            if (input === zeroDivisionError){
+                return zeroDivision;
+            }
             return input[0]
         }
     }
@@ -207,7 +187,8 @@ function fullCalculation(input) {
 
 let calculation = [18,'*',19,'+',22,'*',33,'/',12];
 // 4+(2+(4+(4+1)))+4-(3+2)
-let bracketInput = ['(',4,'+','(',4,'+','(',4,'+',2,')',')',')','+','(',2, '+', 2.2,')'];
+let bracketInput = ['(',4,'+','(',4,'/','(',4,'+',2,')',')',')','+','(',2, '+', '(',2.2,'/',2,')',')'];
 let bracketInput2 = ['(',4,'+',3,')','+',2];
+let zeroDivision = [2, '/', 0];
 //console.log(getInsideBrackets(bracketInput));
 console.log(fullCalculation(bracketInput));
