@@ -190,5 +190,6 @@ let calculation = [18,'*',19,'+',22,'*',33,'/',12];
 let bracketInput = ['(',4,'+','(',4,'/','(',4,'+',2,')',')',')','+','(',2, '+', '(',2.2,'/',2,')',')'];
 let bracketInput2 = ['(',4,'+',3,')','+',2];
 let zeroDivision = [2, '/', 0];
+let negativeInputs = [-12,'-',13];
 //console.log(getInsideBrackets(bracketInput));
-console.log(fullCalculation(bracketInput));
+console.log(fullCalculation(negativeInputs));
