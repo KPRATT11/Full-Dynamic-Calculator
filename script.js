@@ -1,3 +1,79 @@
+let displayTextString = '';
+let calculationArray = [];
+
+
+//Get access to the main calculators display 
+const display = document.querySelector('.results');
+const displayText = document.querySelector('.results p')
+
+//Get acess to all the buttons, buttons that are functions eg ones that 
+//Should not be displayed on the screen have a class of function 
+//attatched to them
+const buttons = document.querySelectorAll('.button');
+
+let bracketCount = 0;
+for (let i =0; i < buttons.length; i++){
+    let currentInput = [];
+    buttons[i].addEventListener('click', function(){
+        if (buttons[i].classList == 'button function'){
+            buttonFunction(buttons[i]);
+        }
+        else if (buttons[i].classList == 'button operator'){
+            //Todo check if the previous input array contains an operator if so replace it
+            //todo if not then input the next array into the string
+
+            displayTextString = displayTextString.concat(buttons[i].textContent)
+            displayText.textContent = displayTextString;
+        }
+        else{
+            displayTextString = displayTextString.concat(buttons[i].textContent)
+            displayText.textContent = displayTextString;
+            
+            //Checks for brackets and uses the count to add a psudeo bracket to the end
+            if (buttons[i].getAttribute('id') === '('){
+                bracketCount ++;
+            }
+            else if (buttons[i].getAttribute('id') === ')'){
+                bracketCount --;
+            }
+        }
+        
+    })
+}
+
+//I know that isnt how it is spelled but that word is a dumb way fo spelling it anyway
+function addBrackets(bracketCount) {
+    if (bracketCount > 0){
+        for (let i =0; i < bracketCount; i++){
+            displayTextString = displayTextString.concat(')')
+            displayText.textContent = displayTextString;
+        }
+        
+    }
+}
+
+
+function buttonFunction(button) {
+    let buttonId = button.getAttribute('id');
+    switch (buttonId) {
+        case 'delete':
+            displayTextString = displayTextString.slice(0, displayTextString.length - 1)
+            displayText.textContent = displayTextString;
+            break;
+
+        case 'clear':
+            console.log('clear that bitch');
+            displayTextString = '';
+            displayText.textContent = displayTextString;
+    
+        default:
+            break;
+    }
+}
+
+
+
+
 const zeroDivisionError = 'Cannot Divide By Zero';
 const infiniteLoopError = 'Error'
 
