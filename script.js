@@ -15,6 +15,9 @@ let bracketCount = 0;
 for (let i =0; i < buttons.length; i++){
     let currentInput = [];
     buttons[i].addEventListener('click', function(){
+        resizeText(displayText)
+        displayTextString = displayText.textContent;
+
         if (buttons[i].classList == 'button function'){
             buttonFunction(buttons[i]);
         }
@@ -22,7 +25,18 @@ for (let i =0; i < buttons.length; i++){
             //Todo check if the previous input array contains an operator if so replace it
             //todo if not then input the next array into the string
 
-            displayTextString = displayTextString.concat(buttons[i].textContent)
+            displayTextArray = displayTextString.split('')
+            if (displayTextArray[displayTextArray.length - 1] === '+' || 
+                displayTextArray[displayTextArray.length - 1] === "\u00F7" ||
+                displayTextArray[displayTextArray.length - 1] === "\u00D7" ||
+                displayTextArray[displayTextArray.length - 1] === "\u2212") {
+                displayTextArray[displayTextArray.length - 1] = buttons[i].textContent;
+                displayTextString = displayTextArray.join('')
+            }
+            else{
+                displayTextString = displayTextString.concat(buttons[i].textContent)
+            }
+            
             displayText.textContent = displayTextString;
         }
         else{
@@ -41,16 +55,28 @@ for (let i =0; i < buttons.length; i++){
     })
 }
 
-//I know that isnt how it is spelled but that word is a dumb way fo spelling it anyway
-function addBrackets(bracketCount) {
-    if (bracketCount > 0){
-        for (let i =0; i < bracketCount; i++){
-            displayTextString = displayTextString.concat(')')
-            displayText.textContent = displayTextString;
-        }
-        
+
+function resizeText(displayText) {
+    if (displayText.textContent.length < 10) {
+        displayText.style.paddingTop = '20px'
+        displayText.style.fontSize = '3em';
+    }
+    else if (displayText.textContent.length >= 10 && displayText.textContent.length <= 16){
+        displayText.style.fontSize = '2em';
+        displayText.style.paddingTop = '40px'
+    }
+
+    else if (displayText.textContent.length > 17 && displayText.textContent.length < 23) {
+        displayText.style.fontSize = '1.5em';
+        displayText.style.paddingTop = '50px'
+    }
+
+    else if (displayText.textContent.length >= 24) {
+        displayText.style.fontSize = '1em';
+        displayText.style.paddingTop = '60px'
     }
 }
+
 
 
 function buttonFunction(button) {
@@ -62,16 +88,58 @@ function buttonFunction(button) {
             break;
 
         case 'clear':
-            console.log('clear that bitch');
             displayTextString = '';
             displayText.textContent = displayTextString;
-    
+            break;
+
+        case 'P-N':
+            convertDisplayToNegative(displayTextString);
+            break;
+
         default:
             break;
     }
 }
 
 
+function convertDisplayToNegative(displayTextString) {
+    displayArray = displayTextString.split("");
+    console.log(displayArray);
+    for (let i = displayArray.length - 1; i > 0; i--){
+        console.log(displayArray[i]);
+        if (displayArray[i] === '-'){
+            displayArray.splice(i, 1)
+            break;
+        }
+        else if (displayArray[i] === '+' || 
+            displayArray[i] === "\u00F7" ||
+            displayArray[i] === "\u00D7" ||
+            displayArray[i] === "\u2212"){ //update with all characters
+            displayArray.splice(i + 1, 0, "-");
+            break;
+        
+        
+        } 
+        else if (i === 1 && displayArray[i - 1] != '-'){
+            console.log('ok');
+            displayArray.unshift('-')
+        }
+
+        else if (i === 1 && displayArray[i - 1] === '-'){
+            displayArray.splice(i - 1, 1);
+        }
+
+    }
+
+    if (displayArray.length === 0) {
+        displayArray = ['-']
+        console.log('yooo');
+    }
+    console.log('yuppie');
+    displayTextString = displayArray.join('');
+    displayText.textContent = displayTextString;
+    return;
+}
 
 
 const zeroDivisionError = 'Cannot Divide By Zero';
