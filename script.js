@@ -1,5 +1,5 @@
 let displayTextString = '';
-let calculationArray = [];
+
 
 
 //Get access to the main calculators display 
@@ -96,6 +96,9 @@ function buttonFunction(button) {
             convertDisplayToNegative(displayTextString);
             break;
 
+        case 'submit':
+            stringToCalculate(displayTextString);
+            break;
         default:
             break;
     }
@@ -139,6 +142,84 @@ function convertDisplayToNegative(displayTextString) {
     displayTextString = displayArray.join('');
     displayText.textContent = displayTextString;
     return;
+}
+
+
+let calculationArray = [];
+function stringToCalculate(str) {
+    calculationArray = [];
+    let currentArray = [];
+    strArray = str.split('')
+    for (let i =0; i < strArray.length; i++){
+        switch (strArray[i]) {
+            case '+':
+                calculationArray = pushPrevious('+', currentArray, calculationArray);
+                currentArray = [];
+                break;
+            
+            case "\u00F7":
+                calculationArray = pushPrevious('/', currentArray, calculationArray);
+                currentArray = [];
+                break;
+
+            case "\u00D7":
+                calculationArray = pushPrevious('*', currentArray, calculationArray)
+                currentArray = [];
+                break;
+
+            case '\u2212':
+                calculationArray = pushPrevious('-', currentArray, calculationArray)
+                currentArray = [];
+                break;
+
+            case '(':
+                if (currentArray.length > 0) {
+                    calculationArray = pushPrevious('(', currentArray, calculationArray);  
+                }
+                else{
+                    calculationArray.push('(')
+                }
+                currentArray = [];
+                break;
+
+            case ')':
+                if (currentArray.length > 0) {
+                    calculationArray = pushPrevious(')', currentArray, calculationArray);  
+                }
+                else{
+                    calculationArray.push(')')
+                }
+                currentArray = [];
+                break;
+
+            default:
+                currentArray.push(strArray[i]);
+                break;
+        }
+        
+    }
+    if (currentArray.length > 0){
+        calculationArray.push(condenseToNumber(currentArray));
+    }
+    console.log(calculationArray);
+}
+
+function pushPrevious(symbol, currentArray, calculationArray) {
+    if (currentArray.includes(')')){
+        calculationArray.push(currentArray)
+    }
+    else {
+        calculationArray.push(condenseToNumber(currentArray));
+    }
+    calculationArray.push(symbol)
+    currentArray = [];
+    return calculationArray;
+}
+
+function condenseToNumber(array) {
+    let tmp = array.join('')
+    tmp = parseFloat(tmp)
+    return tmp;
 }
 
 
