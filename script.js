@@ -1,7 +1,7 @@
 let displayTextString = '';
+let modeError = false;
 
-
-
+console.log('hey');
 //Get access to the main calculators display 
 const display = document.querySelector('.results');
 const displayText = document.querySelector('.results p')
@@ -13,8 +13,14 @@ const buttons = document.querySelectorAll('.button');
 
 let bracketCount = 0;
 for (let i =0; i < buttons.length; i++){
+    
     let currentInput = [];
     buttons[i].addEventListener('click', function(){
+        if (modeError == true){
+            displayTextString = '';
+            displayText.textContent = displayTextString;
+            modeError = false;
+        }
         resizeText(displayText)
         displayTextString = displayText.textContent;
 
@@ -22,9 +28,6 @@ for (let i =0; i < buttons.length; i++){
             buttonFunction(buttons[i]);
         }
         else if (buttons[i].classList == 'button operator'){
-            //Todo check if the previous input array contains an operator if so replace it
-            //todo if not then input the next array into the string
-
             displayTextArray = displayTextString.split('')
             if (displayTextArray[displayTextArray.length - 1] === '+' || 
                 displayTextArray[displayTextArray.length - 1] === "\u00F7" ||
@@ -78,7 +81,7 @@ function resizeText(displayText) {
 }
 
 
-
+let calculationAnswer = undefined;
 function buttonFunction(button) {
     let buttonId = button.getAttribute('id');
     switch (buttonId) {
@@ -97,7 +100,24 @@ function buttonFunction(button) {
             break;
 
         case 'submit':
-            stringToCalculate(displayTextString);
+            if (bracketCount > 0){
+                for (let i = bracketCount; i > 0; i--){
+                    displayTextString = displayTextString.concat(')')
+                    console.log('clllose');
+                }
+            }
+            console.log(bracketCount);
+            let calculationInput = stringToCalculate(displayTextString);
+            calculationAnswer = fullCalculation(calculationInput);
+            if (calculationAnswer == zeroDivisionError || calculationAnswer == infiniteLoopError){
+                modeError = true;
+            }
+            else{
+                modeError = false;
+            }
+            bracketCount = 0;
+            displayText.textContent = calculationAnswer;
+            resizeText(displayText);
             break;
         default:
             break;
@@ -107,9 +127,7 @@ function buttonFunction(button) {
 
 function convertDisplayToNegative(displayTextString) {
     displayArray = displayTextString.split("");
-    console.log(displayArray);
     for (let i = displayArray.length - 1; i > 0; i--){
-        console.log(displayArray[i]);
         if (displayArray[i] === '-'){
             displayArray.splice(i, 1)
             break;
@@ -124,7 +142,6 @@ function convertDisplayToNegative(displayTextString) {
         
         } 
         else if (i === 1 && displayArray[i - 1] != '-'){
-            console.log('ok');
             displayArray.unshift('-')
         }
 
@@ -136,9 +153,7 @@ function convertDisplayToNegative(displayTextString) {
 
     if (displayArray.length === 0) {
         displayArray = ['-']
-        console.log('yooo');
     }
-    console.log('yuppie');
     displayTextString = displayArray.join('');
     displayText.textContent = displayTextString;
     return;
@@ -201,12 +216,12 @@ function stringToCalculate(str) {
     if (currentArray.length > 0){
         calculationArray.push(condenseToNumber(currentArray));
     }
-    console.log(calculationArray);
+    return calculationArray;
 }
 
 function pushPrevious(symbol, currentArray, calculationArray) {
-    if (currentArray.includes(')')){
-        calculationArray.push(currentArray)
+    if (currentArray.length === 0){
+        
     }
     else {
         calculationArray.push(condenseToNumber(currentArray));
@@ -363,17 +378,14 @@ function fullCalculation(input) {
         else if (input === zeroDivisionError){
             return zeroDivisionError
         }
-        console.log('full input '+ input);
         if (input.includes('(')){
             for (let i =0; i < input.length; i++){
                 if (input[i] == '('){
                     let newArray = [];
                     let bracketPos = 0;
                     for (let e = i; e < input.length; e++){
-                        //console.log('Bracket Position ' + bracketPos);
                         if (input[e] === ')'){
                             newArray.push(input[e]);
-                            //console.log(newArray);
                             bracketPos -= 1;
                             if (bracketPos == 0){
                                 break;
@@ -391,18 +403,14 @@ function fullCalculation(input) {
                     newArray = getInsideBrackets(newArray)
                     answer = fullCalculation(newArray);
                     input[i] = answer;
-                    console.log('before splice ' + input);
-                    console.log(newArrayLength);
                     input.splice(i + 1, newArrayLength - 1)
-                    console.log('after splice ' + input);
                 }
             }
         }
         else{
-            console.log('Final Input ' + input);
             input = calculate(input)
             if (input === zeroDivisionError){
-                return zeroDivision;
+                return zeroDivisionError;
             }
             return input[0]
         }
@@ -410,11 +418,4 @@ function fullCalculation(input) {
     return input[0]
 }
 
-let calculation = [18,'*',19,'+',22,'*',33,'/',12];
-// 4+(2+(4+(4+1)))+4-(3+2)
-let bracketInput = ['(',4,'+','(',4,'/','(',4,'+',2,')',')',')','+','(',2, '+', '(',2.2,'/',2,')',')'];
-let bracketInput2 = ['(',4,'+',3,')','+',2];
-let zeroDivision = [2, '/', 0];
-let negativeInputs = [-12,'-',13];
-//console.log(getInsideBrackets(bracketInput));
-console.log(fullCalculation(negativeInputs));
+
